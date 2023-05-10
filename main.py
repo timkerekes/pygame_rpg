@@ -17,6 +17,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.font = pygame.font.Font('Roboto-Bold.ttf', 32)
         self.running = True
+        self.lvl_complete = False
 
         self.character_spritesheet = SpriteSheet('img/character.png')
         self.terrain_spritesheet = SpriteSheet('img/terrain.png')
@@ -76,6 +77,10 @@ class Game:
         # game loop updates
         self.all_sprites.update()
 
+        if len(self.enemies.sprites()) == 0:
+                self.lvl_complete = True
+                self.playing = False
+
     def draw(self):
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
@@ -110,6 +115,9 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.running = False
 
             mouse_pos = pygame.mouse.get_pos()
             mouse_pressed = pygame.mouse.get_pressed()
@@ -159,13 +167,51 @@ class Game:
             self.clock.tick(FPS)
             pygame.display.update()
 
+    def win_screen(self):
+        title = self.font.render('LEVEL COMPLETE!', True, WHITE)
+        title_rect = title.get_rect(center=(WIN_WIDTH/2, (WIN_HEIGHT/2)-100))
+
+        restart_button = Button((WIN_WIDTH/2)-225, (WIN_HEIGHT/2)+100,
+                                150, 50, BLACK, WHITE, 'Restart', 32)
+        
+        next_button = Button((WIN_WIDTH/2)+50, (WIN_HEIGHT/2)+100,
+                             200, 50, BLACK, WHITE, 'Next Level', 32)
+        
+        for sprite in self.all_sprites:
+            sprite.kill()
+        
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.running = False
+
+            mouse_pos = pygame.mouse.get_pos()
+            mouse_pressed = pygame.mouse.get_pressed()
+
+            if restart_button.is_pressed(mouse_pos, mouse_pressed):
+                self.new()
+                self.main()
+
+            self.screen.blit(self.intro_background, (0, 0))
+            self.screen.blit(title, title_rect)
+            self.screen.blit(restart_button.image, restart_button.rect)
+            self.screen.blit(next_button.image, next_button.rect)
+            self.clock.tick(FPS)
+            pygame.display.update()
+
 
 g = Game()
 g.intro_screen()
 g.new()
 while g.running:
     g.main()
-    g.game_over()
+    if g.lvl_complete == True:
+        g.win_screen()
+    else:
+        g.game_over()
 
 pygame.quit()
 sys.exit()

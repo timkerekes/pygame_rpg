@@ -2,6 +2,12 @@ import pygame
 import sys
 from config import *
 from sprites import *
+from player import *
+from enemy import *
+from block import *
+from ground import *
+from button import *
+from attack import *
 
 
 class Game:
@@ -26,9 +32,9 @@ class Game:
                 if column == 'B':
                     Block(self, j, i)
                 if column == 'E':
-                    Enemy(self, j, i)
+                    self.enemy = Enemy(self, j, i, 100)
                 if column == 'P':
-                    self.player = Player(self, j, i)
+                    self.player = Player(self, j, i, 100)
 
     def new(self):
         # a new game starts
@@ -49,6 +55,9 @@ class Game:
                 self.running = False
 
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.playing = False
+                    self.running = False
                 if event.key == pygame.K_SPACE:
                     if self.player.facing == 'up':
                         Attack(self, self.player.rect.x,
@@ -70,6 +79,10 @@ class Game:
     def draw(self):
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
+        self.player.draw_health_bar(self.screen)
+        for enemy in self.enemies:
+            if enemy.hp > 0:
+                enemy.draw_health_bar(self.screen)
         self.clock.tick(FPS)
         pygame.display.update()
 
@@ -129,6 +142,10 @@ class Game:
                 if event.type == pygame.QUIT:
                     intro = False
                     self.running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        intro = False
+                        self.running = False
 
             mouse_pos = pygame.mouse.get_pos()
             mouse_pressed = pygame.mouse.get_pressed()

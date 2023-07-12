@@ -8,6 +8,7 @@ from block import *
 from ground import *
 from button import *
 from attack import *
+from fireball import *
 
 
 class Game:
@@ -23,6 +24,7 @@ class Game:
         self.terrain_spritesheet = SpriteSheet('img/terrain.png')
         self.enemy_spritesheet = SpriteSheet('img/enemy.png')
         self.attack_spritesheet = SpriteSheet('img/attack.png')
+        self.fireball_spritesheet = SpriteSheet('img/All_Fire_Bullet_Pixel.png')
         self.intro_background = pygame.image.load('img/introbackground.png')
         self.go_background = pygame.image.load('img/gameover.png')
 
@@ -61,17 +63,25 @@ class Game:
                     self.running = False
                 if event.key == pygame.K_SPACE:
                     if self.player.facing == 'up':
-                        Attack(self, self.player.rect.x,
+                        # Attack(self, self.player.rect.x,
+                        #        self.player.rect.y - TILESIZE)
+                        Fireball(self, self.player.rect.x,
                                self.player.rect.y - TILESIZE)
                     if self.player.facing == 'down':
-                        Attack(self, self.player.rect.x,
-                               self.player.rect.y + TILESIZE)
+                        # Attack(self, self.player.rect.x,
+                        #        self.player.rect.y + TILESIZE)
+                        Fireball(self, self.player.rect.x,
+                               self.player.rect.y + TILESIZE * 2)
                     if self.player.facing == 'left':
-                        Attack(self, self.player.rect.x -
-                               TILESIZE, self.player.rect.y)
+                        # Attack(self, self.player.rect.x -
+                        #        TILESIZE, self.player.rect.y)
+                        Fireball(self, self.player.rect.x - TILESIZE,
+                               self.player.rect.y)
                     if self.player.facing == 'right':
-                        Attack(self, self.player.rect.x +
-                               TILESIZE, self.player.rect.y)
+                        # Attack(self, self.player.rect.x +
+                        #        TILESIZE, self.player.rect.y)
+                        Fireball(self, self.player.rect.x + TILESIZE,
+                               self.player.rect.y)
 
     def update(self):
         # game loop updates
